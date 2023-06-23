@@ -18,16 +18,16 @@ func main() {
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 	delayParam := r.URL.Query().Get("delay")
-	responseStatusParam := r.URL.Query().Get("status")
+	statusParam := r.URL.Query().Get("status")
 
 	delay, err := strconv.Atoi(delayParam)
 	if err != nil || delay < 0 {
 		delay = 0
 	}
 
-	responseStatus, err := strconv.Atoi(responseStatusParam)
-	if err != nil || responseStatus < 0 {
-		responseStatus = 200
+	status, err := strconv.Atoi(statusParam)
+	if err != nil || status < 0 {
+		status = 200
 	}
 
 	if delay > 0 {
@@ -39,14 +39,15 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		Text   string `json:"message"`
 	}
 
-	message := Message{Status: responseStatus, Text: "Hello, World!"}
-	jsonData, err := json.Marshal(message)
+	body, err := json.Marshal(
+		Message{Status: status, Text: "Hello, World!"},
+	)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(responseStatus)
-	w.Write(jsonData)
+	w.WriteHeader(status)
+	w.Write(body)
 }
