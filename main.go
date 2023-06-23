@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"strconv"
+	"time"
 )
-
 
 func main() {
 	port := 42069
@@ -31,14 +30,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		responseStatus = 200
 	}
 
-
-	if (delay > 0) {
+	if delay > 0 {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 
 	type Message struct {
-		Status int `json:"status"`
-		Text string `json:"message"`
+		Status int    `json:"status"`
+		Text   string `json:"message"`
 	}
 
 	message := Message{Status: responseStatus, Text: "Hello, World!"}
