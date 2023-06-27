@@ -35,12 +35,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type Message struct {
+		Headers map[string][]string `json:headers`
 		Status int    `json:"status"`
 		Text   string `json:"message"`
 	}
 
 	body, err := json.Marshal(
-		Message{Status: status, Text: "Hello, World!"},
+		Message{Status: status, Text: "Hello, World!", Headers: r.Header},
 	)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
