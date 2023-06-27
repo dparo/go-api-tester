@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -34,16 +36,26 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 
+	bodyBytes, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		log.Fatal(err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	type Message struct {
-		Headers map[string][]string `json:headers`
-		Status int    `json:"status"`
-		Text   string `json:"message"`
+		Status  int                 `json:"status"`
+		Text    string              `json:"message"`
+		Headers map[string][]string `json:"headers"`
+		Body    string              `json:"body"`
 	}
 
 	body, err := json.Marshal(
-		Message{Status: status, Text: "Hello, World!", Headers: r.Header},
+		Message{Status: status, Text: "Hello, World!", Headers: r.Header, Body: string(bodyBytes)},
 	)
 	if err != nil {
+		log.Fatal(err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
