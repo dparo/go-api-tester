@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -11,7 +12,11 @@ import (
 )
 
 func main() {
-	port := 42069
+
+	port := 0
+	flag.IntVar(&port, "p", 42069, "Provide a port number")
+	flag.Parse()
+
 	fmt.Printf("Server listening on port %d\n", port)
 
 	http.HandleFunc("/", handleRequest)
